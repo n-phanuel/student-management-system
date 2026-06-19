@@ -1,4 +1,4 @@
-# Student Management System v2 — Setup Guide
+# Student Management System 
 
 
 
