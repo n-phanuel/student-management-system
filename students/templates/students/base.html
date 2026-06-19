@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>{% block title %}SMS — Student Management System{% endblock %}</title>
+
+  <!-- Bootstrap 5 CDN -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+        rel="stylesheet"/>
+  <!-- Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+        rel="stylesheet"/>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap"
+        rel="stylesheet"/>
+
+  <style>
+    /* ── Design Tokens ──────────────────────────────────── */
+    :root {
+      --primary:   #1a56db;
+      --primary-d: #1245b5;
+      --accent:    #f59e0b;
+      --success:   #10b981;
+      --danger:    #ef4444;
+      --surface:   #f8fafc;
+      --card:      #ffffff;
+      --border:    #e2e8f0;
+      --text:      #1e293b;
+      --muted:     #64748b;
+      --sidebar-w: 260px;
+    }
+
+    /* ── Global ─────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; }
+
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background: var(--surface);
+      color: var(--text);
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+    }
+
+    /* ── Sidebar ────────────────────────────────────────── */
+    .sidebar {
+      width: var(--sidebar-w);
+      min-height: 100vh;
+      background: linear-gradient(160deg, #0f172a 0%, #1e293b 100%);
+      color: #cbd5e1;
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      top: 0; left: 0; bottom: 0;
+      z-index: 100;
+      box-shadow: 4px 0 24px rgba(0,0,0,.15);
+      transition: transform .3s;
+    }
+
+    .sidebar-brand {
+      padding: 1.5rem 1.25rem 1.25rem;
+      border-bottom: 1px solid rgba(255,255,255,.08);
+    }
+    .sidebar-brand .logo {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: #fff;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+    }
+    .sidebar-brand .logo span {
+      background: var(--primary);
+      color: #fff;
+      border-radius: 8px;
+      padding: .2rem .5rem;
+      font-size: .9rem;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .sidebar-nav {
+      flex: 1;
+      overflow-y: auto;
+      padding: 1rem 0;
+    }
+    .nav-section-label {
+      font-size: .65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      color: #475569;
+      padding: 1rem 1.25rem .4rem;
+    }
+    .sidebar-link {
+      display: flex;
+      align-items: center;
+      gap: .75rem;
+      padding: .6rem 1.25rem;
+      color: #94a3b8;
+      text-decoration: none;
+      border-radius: 0;
+      font-size: .875rem;
+      font-weight: 500;
+      transition: all .18s;
+      border-left: 3px solid transparent;
+      margin: .1rem 0;
+    }
+    .sidebar-link:hover,
+    .sidebar-link.active {
+      color: #fff;
+      background: rgba(255,255,255,.06);
+      border-left-color: var(--primary);
+    }
+    .sidebar-link .bi { font-size: 1.05rem; opacity: .85; }
+
+    .sidebar-footer {
+      padding: 1rem 1.25rem;
+      border-top: 1px solid rgba(255,255,255,.06);
+      font-size: .8rem;
+      color: #475569;
+    }
+
+    /* ── Main content ───────────────────────────────────── */
+    .main-wrapper {
+      margin-left: var(--sidebar-w);
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    .topbar {
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+      padding: .875rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+    .topbar .page-title {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+    .topbar .user-pill {
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+      font-size: .85rem;
+      color: var(--muted);
+    }
+    .user-avatar {
+      width: 32px; height: 32px;
+      background: var(--primary);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: .75rem;
+      font-weight: 700;
+    }
+
+    .content-area {
+      padding: 2rem;
+      flex: 1;
+    }
+
+    /* ── Cards ──────────────────────────────────────────── */
+    .card {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      box-shadow: 0 1px 4px rgba(0,0,0,.04);
+    }
+    .card-header {
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+      border-radius: 12px 12px 0 0 !important;
+      padding: 1rem 1.5rem;
+      font-weight: 600;
+    }
+
+    /* ── Stat cards ─────────────────────────────────────── */
+    .stat-card {
+      border-radius: 14px;
+      padding: 1.4rem 1.5rem;
+      color: #fff;
+      position: relative;
+      overflow: hidden;
+    }
+    .stat-card::after {
+      content: '';
+      position: absolute;
+      right: -20px; top: -20px;
+      width: 100px; height: 100px;
+      border-radius: 50%;
+      background: rgba(255,255,255,.1);
+    }
+    .stat-card .stat-icon {
+      font-size: 2rem;
+      opacity: .9;
+    }
+    .stat-card .stat-value {
+      font-size: 2.2rem;
+      font-weight: 700;
+      line-height: 1;
+      margin: .4rem 0 .15rem;
+    }
+    .stat-card .stat-label {
+      font-size: .8rem;
+      opacity: .85;
+      font-weight: 500;
+    }
+    .stat-blue   { background: linear-gradient(135deg,#1a56db,#3b82f6); }
+    .stat-green  { background: linear-gradient(135deg,#059669,#10b981); }
+    .stat-amber  { background: linear-gradient(135deg,#d97706,#f59e0b); }
+    .stat-violet { background: linear-gradient(135deg,#7c3aed,#a78bfa); }
+    .stat-rose   { background: linear-gradient(135deg,#e11d48,#fb7185); }
+
+    /* ── Tables ─────────────────────────────────────────── */
+    .table th {
+      font-size: .7rem;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      font-weight: 700;
+      color: var(--muted);
+      border-bottom: 2px solid var(--border);
+      padding: .75rem 1rem;
+    }
+    .table td {
+      padding: .75rem 1rem;
+      vertical-align: middle;
+      font-size: .875rem;
+    }
+    .table tbody tr:hover { background: #f1f5f9; }
+
+    /* ── Badges ─────────────────────────────────────────── */
+    .status-badge {
+      padding: .25rem .65rem;
+      border-radius: 20px;
+      font-size: .72rem;
+      font-weight: 600;
+      text-transform: capitalize;
+    }
+    .status-active     { background:#dcfce7; color:#166534; }
+    .status-inactive   { background:#f1f5f9; color:#475569; }
+    .status-graduated  { background:#dbeafe; color:#1e40af; }
+    .status-suspended  { background:#fef2f2; color:#991b1b; }
+
+    /* ── Buttons ────────────────────────────────────────── */
+    .btn { border-radius: 8px; font-weight: 500; font-size: .875rem; }
+    .btn-primary { background:var(--primary); border-color:var(--primary); }
+    .btn-primary:hover { background:var(--primary-d); border-color:var(--primary-d); }
+
+    /* ── Forms ──────────────────────────────────────────── */
+    .form-control, .form-select {
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      font-size: .875rem;
+      padding: .5rem .85rem;
+    }
+    .form-control:focus, .form-select:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(26,86,219,.15);
+    }
+    label.form-label { font-size: .82rem; font-weight: 600; color: var(--muted); }
+
+    /* ── Alerts ─────────────────────────────────────────── */
+    .alert { border-radius: 10px; font-size: .875rem; }
+
+    /* ── Avatar letters ─────────────────────────────────── */
+    .student-avatar {
+      width: 36px; height: 36px;
+      border-radius: 10px;
+      background: var(--primary);
+      color: #fff;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: .8rem;
+      flex-shrink: 0;
+    }
+
+    /* ── Responsive ─────────────────────────────────────── */
+    @media (max-width: 768px) {
+      .sidebar { transform: translateX(-100%); }
+      .sidebar.open { transform: translateX(0); }
+      .main-wrapper { margin-left: 0; }
+    }
+  </style>
+  {% block extra_head %}{% endblock %}
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════
+     SIDEBAR  (VIEW layer — navigation)
+═══════════════════════════════════════════════════════ -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-brand">
+    <a href="{% if user.is_authenticated %}{% if user.is_staff or user.is_superuser %}{% url 'home' %}{% else %}{% url 'student_portal' %}{% endif %}{% else %}{% url 'landing' %}{% endif %}" class="logo">
+      <span>SMS</span> {% if user.is_authenticated and not user.is_staff and not user.is_superuser %}Student Portal{% else %}Admin Panel{% endif %}
+    </a>
+  </div>
+
+  <nav class="sidebar-nav">
+
+    {# ── STUDENT PORTAL NAV (logged-in students only) ── #}
+    {% if user.is_authenticated and not user.is_staff and not user.is_superuser %}
+      <div class="nav-section-label">My Portal</div>
+      <a href="{% url 'student_portal' %}"
+         class="sidebar-link {% if request.resolver_match.url_name == 'student_portal' %}active{% endif %}">
+        <i class="bi bi-grid-1x2"></i> My Dashboard
+      </a>
+      <a href="{% url 'student_profile_view' %}"
+         class="sidebar-link {% if request.resolver_match.url_name == 'student_profile_view' %}active{% endif %}">
+        <i class="bi bi-person-circle"></i> My Profile
+      </a>
+      <div class="nav-section-label">Academic</div>
+      <a href="{% url 'course_list' %}"
+         class="sidebar-link {% if request.resolver_match.url_name == 'course_list' %}active{% endif %}">
+        <i class="bi bi-journal-bookmark"></i> Course Catalogue
+      </a>
+      <a href="{% url 'department_list' %}"
+         class="sidebar-link {% if request.resolver_match.url_name == 'department_list' %}active{% endif %}">
+        <i class="bi bi-building"></i> Departments
+      </a>
+
+    {# ── ADMIN NAV (staff/superusers) ── #}
+    {% elif user.is_authenticated %}
+      <div class="nav-section-label">Main</div>
+      <a href="{% url 'home' %}"
+         class="sidebar-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}">
+        <i class="bi bi-grid-1x2"></i> Dashboard
+      </a>
+      <div class="nav-section-label">Students</div>
+      <a href="{% url 'student_list' %}"
+         class="sidebar-link {% if request.resolver_match.url_name == 'student_list' or request.resolver_match.url_name == 'student_detail' %}active{% endif %}">
+        <i class="bi bi-person-lines-fill"></i> All Students
+      </a>
+      <a href="{% url 'student_create' %}" class="sidebar-link">
+        <i class="bi bi-person-plus"></i> Add Student
+      </a>
+      <div class="nav-section-label">Academic</div>
+      <a href="{% url 'department_list' %}"
+         class="sidebar-link {% if 'department' in request.resolver_match.url_name %}active{% endif %}">
+        <i class="bi bi-building"></i> Departments
+      </a>
+      <a href="{% url 'course_list' %}"
+         class="sidebar-link {% if 'course' in request.resolver_match.url_name %}active{% endif %}">
+        <i class="bi bi-journal-bookmark"></i> Courses
+      </a>
+      <div class="nav-section-label">Actions</div>
+      <a href="{% url 'enrollment_create' %}" class="sidebar-link">
+        <i class="bi bi-plus-circle"></i> New Enrollment
+      </a>
+      <a href="{% url 'export_students_csv' %}" class="sidebar-link">
+        <i class="bi bi-download"></i> Export CSV
+      </a>
+      <a href="{% url 'admin_change_password' %}"
+         class="sidebar-link {% if request.resolver_match.url_name == 'admin_change_password' %}active{% endif %}">
+        <i class="bi bi-key"></i> Change Password
+      </a>
+      <a href="{% url 'admin_change_password' %}"
+         class="sidebar-link {% if request.resolver_match.url_name == 'admin_change_password' %}active{% endif %}">
+        <i class="bi bi-key"></i> Change Password
+      </a>
+
+    {# ── GUEST NAV ── #}
+    {% else %}
+      <div class="nav-section-label">Browse</div>
+      <a href="{% url 'home' %}"
+         class="sidebar-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}">
+        <i class="bi bi-grid-1x2"></i> Dashboard
+      </a>
+      <a href="{% url 'student_list' %}" class="sidebar-link">
+        <i class="bi bi-person-lines-fill"></i> Students
+      </a>
+      <a href="{% url 'department_list' %}" class="sidebar-link">
+        <i class="bi bi-building"></i> Departments
+      </a>
+      <a href="{% url 'course_list' %}" class="sidebar-link">
+        <i class="bi bi-journal-bookmark"></i> Courses
+      </a>
+    {% endif %}
+  </nav>
+
+  <div class="sidebar-footer">
+    {% if user.is_authenticated %}
+      {% if user.is_staff or user.is_superuser %}
+        <div style="font-size:.75rem;margin-bottom:.4rem">
+          <span class="badge" style="background:rgba(16,185,129,.2);color:#10b981;font-size:.65rem">ADMIN</span>
+          &nbsp;<strong style="color:#e2e8f0">{{ user.username }}</strong>
+        </div>
+      {% else %}
+        <div style="font-size:.75rem;margin-bottom:.4rem">
+          <span class="badge" style="background:rgba(59,130,246,.2);color:#60a5fa;font-size:.65rem">STUDENT</span>
+          &nbsp;<strong style="color:#e2e8f0">{{ user.username }}</strong>
+        </div>
+      {% endif %}
+      {# ── LOGOUT — uses a POST form (the correct way) ── #}
+      <form method="post" action="{% url 'logout' %}" style="margin:0">
+        {% csrf_token %}
+        <button type="submit"
+                style="background:none;border:none;padding:0;cursor:pointer;font-size:.8rem;color:#f87171;text-decoration:none;display:flex;align-items:center;gap:.35rem;">
+          <i class="bi bi-box-arrow-right"></i> Sign out
+        </button>
+      </form>
+    {% else %}
+      <a href="{% url 'login' %}" class="text-info text-decoration-none small">
+        <i class="bi bi-box-arrow-in-right"></i> Login
+      </a>
+      <span class="text-muted mx-1" style="font-size:.75rem">·</span>
+      <a href="{% url 'student_register' %}" class="text-warning text-decoration-none small">
+        <i class="bi bi-person-plus"></i> Register
+      </a>
+    {% endif %}
+  </div>
+</aside>
+
+<!-- ═══════════════════════════════════════════════════════
+     MAIN CONTENT AREA
+═══════════════════════════════════════════════════════ -->
+<div class="main-wrapper">
+  <!-- Top bar -->
+  <header class="topbar">
+    <div class="d-flex align-items-center gap-3">
+      <button class="btn btn-sm btn-light d-md-none" onclick="toggleSidebar()">
+        <i class="bi bi-list"></i>
+      </button>
+      <span class="page-title">{% block page_title %}Student Management System{% endblock %}</span>
+    </div>
+    <div class="user-pill">
+      {% if user.is_authenticated %}
+        <div class="user-avatar"
+             style="{% if user.is_staff or user.is_superuser %}background:#10b981{% else %}background:#3b82f6{% endif %}">
+          {{ user.username|first|upper }}
+        </div>
+        <span>{{ user.username }}</span>
+        {% if user.is_staff or user.is_superuser %}
+          <span class="badge" style="background:rgba(16,185,129,.15);color:#059669;font-size:.65rem;border-radius:6px">Admin</span>
+        {% else %}
+          <span class="badge" style="background:rgba(59,130,246,.15);color:#2563eb;font-size:.65rem;border-radius:6px">Student</span>
+        {% endif %}
+        <form method="post" action="{% url 'logout' %}" style="margin:0;display:inline">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-sm btn-outline-danger ms-1" title="Logout">
+            <i class="bi bi-box-arrow-right"></i>
+          </button>
+        </form>
+      {% else %}
+        <a href="{% url 'login' %}" class="btn btn-sm btn-primary">
+          <i class="bi bi-box-arrow-in-right me-1"></i>Login
+        </a>
+        <a href="{% url 'student_register' %}" class="btn btn-sm btn-outline-secondary">Register</a>
+      {% endif %}
+    </div>
+  </header>
+
+  <!-- Flash messages -->
+  <div class="px-4 pt-3">
+    {% for message in messages %}
+      <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+      </div>
+    {% endfor %}
+  </div>
+
+  <!-- Page content -->
+  <main class="content-area">
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="text-center py-3 border-top" style="font-size:.78rem;color:var(--muted)">
+    Student Management System &copy; 2026 — MVC Assignment Project
+  </footer>
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  function toggleSidebar() {
+    document.getElementById('sidebar').classList.toggle('open');
+  }
+</script>
+{% block extra_js %}{% endblock %}
+</body>
+</html>

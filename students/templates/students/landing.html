@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Welcome — Student Management System</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      margin: 0; padding: 0;
+      min-height: 100vh;
+      background: #0b1120;
+      color: #fff;
+      overflow-x: hidden;
+    }
+
+    /* ── Animated background ─────────────────────────────── */
+    .bg-scene {
+      position: fixed; inset: 0; z-index: 0;
+      background: radial-gradient(ellipse 80% 60% at 50% -10%, #1a3a6e 0%, transparent 70%),
+                  radial-gradient(ellipse 60% 50% at 80% 80%,  #0f2d6e 0%, transparent 60%),
+                  linear-gradient(160deg, #060c1a 0%, #0d1d3a 50%, #060c1a 100%);
+    }
+    .orb {
+      position: fixed; border-radius: 50%;
+      filter: blur(80px); opacity: .18; z-index: 0;
+      animation: float 8s ease-in-out infinite;
+    }
+    .orb-1 { width:500px; height:500px; background:#1a56db; top:-150px; left:-100px; animation-delay:0s; }
+    .orb-2 { width:400px; height:400px; background:#7c3aed; bottom:-100px; right:-100px; animation-delay:3s; }
+    .orb-3 { width:300px; height:300px; background:#0891b2; top:40%; left:60%; animation-delay:5s; }
+
+    @keyframes float {
+      0%,100% { transform: translateY(0) scale(1); }
+      50%      { transform: translateY(-30px) scale(1.05); }
+    }
+
+    /* ── Grid of decorative dots ─────────────────────────── */
+    .dot-grid {
+      position: fixed; inset: 0; z-index: 0;
+      background-image: radial-gradient(circle, rgba(255,255,255,.06) 1px, transparent 1px);
+      background-size: 32px 32px;
+    }
+
+    /* ── Page layout ─────────────────────────────────────── */
+    .page {
+      position: relative; z-index: 1;
+      min-height: 100vh;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: 2rem 1rem;
+    }
+
+    /* ── Branding ─────────────────────────────────────────── */
+    .brand-badge {
+      display: inline-flex; align-items: center; gap: .5rem;
+      background: rgba(26,86,219,.2);
+      border: 1px solid rgba(59,130,246,.3);
+      border-radius: 999px; padding: .35rem .9rem;
+      font-size: .75rem; font-weight: 600;
+      color: #93c5fd; letter-spacing: .08em;
+      text-transform: uppercase; margin-bottom: 1.5rem;
+    }
+
+    .hero-logo {
+      width: 80px; height: 80px;
+      background: linear-gradient(135deg, #1a56db, #3b82f6);
+      border-radius: 24px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2.2rem; font-weight: 800; color: #fff;
+      box-shadow: 0 0 60px rgba(26,86,219,.5), 0 0 120px rgba(26,86,219,.2);
+      margin: 0 auto 1.5rem;
+    }
+
+    h1.hero-title {
+      font-size: clamp(2rem, 5vw, 3rem);
+      font-weight: 800;
+      line-height: 1.15;
+      text-align: center;
+      margin-bottom: .75rem;
+      background: linear-gradient(135deg, #fff 30%, #93c5fd 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero-sub {
+      font-size: 1rem; color: #94a3b8;
+      text-align: center; max-width: 500px;
+      margin: 0 auto 2.5rem; line-height: 1.6;
+    }
+
+    /* ── Action cards ─────────────────────────────────────── */
+    .action-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1rem;
+      width: 100%; max-width: 800px;
+      margin: 0 auto 2rem;
+    }
+
+    .action-card {
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 18px;
+      padding: 1.75rem 1.5rem;
+      text-decoration: none;
+      color: inherit;
+      cursor: pointer;
+      transition: transform .25s, background .25s, border-color .25s, box-shadow .25s;
+      display: flex; flex-direction: column;
+      align-items: flex-start; gap: .75rem;
+      position: relative; overflow: hidden;
+    }
+    .action-card::before {
+      content: '';
+      position: absolute; inset: 0;
+      border-radius: inherit;
+      background: linear-gradient(135deg, transparent 40%, rgba(255,255,255,.03) 100%);
+      pointer-events: none;
+    }
+    .action-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(255,255,255,.18);
+      box-shadow: 0 20px 50px rgba(0,0,0,.4);
+      color: inherit; text-decoration: none;
+    }
+    .action-card.primary-card {
+      background: linear-gradient(135deg, rgba(26,86,219,.35), rgba(59,130,246,.2));
+      border-color: rgba(59,130,246,.4);
+    }
+    .action-card.primary-card:hover {
+      background: linear-gradient(135deg, rgba(26,86,219,.5), rgba(59,130,246,.3));
+      box-shadow: 0 20px 50px rgba(26,86,219,.35);
+    }
+    .action-card.student-card {
+      background: linear-gradient(135deg, rgba(16,185,129,.2), rgba(5,150,105,.1));
+      border-color: rgba(16,185,129,.3);
+    }
+    .action-card.student-card:hover {
+      background: linear-gradient(135deg, rgba(16,185,129,.35), rgba(5,150,105,.2));
+      box-shadow: 0 20px 50px rgba(16,185,129,.25);
+    }
+    .action-card.exit-card {
+      background: rgba(239,68,68,.08);
+      border-color: rgba(239,68,68,.15);
+    }
+    .action-card.exit-card:hover {
+      background: rgba(239,68,68,.15);
+      border-color: rgba(239,68,68,.3);
+    }
+
+    .card-icon {
+      width: 48px; height: 48px;
+      border-radius: 14px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.4rem;
+    }
+    .icon-blue   { background: rgba(59,130,246,.2); color: #60a5fa; }
+    .icon-green  { background: rgba(16,185,129,.2); color: #34d399; }
+    .icon-red    { background: rgba(239,68,68,.15); color: #f87171; }
+
+    .card-label {
+      font-size: .72rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: .1em; color: #64748b;
+    }
+    .card-title {
+      font-size: 1.05rem; font-weight: 700; color: #f1f5f9;
+      line-height: 1.2;
+    }
+    .card-desc {
+      font-size: .82rem; color: #64748b; line-height: 1.5;
+    }
+    .card-arrow {
+      margin-left: auto; margin-top: auto;
+      font-size: 1.1rem; color: #475569;
+      transition: transform .2s;
+    }
+    .action-card:hover .card-arrow { transform: translateX(4px); }
+
+    /* ── Flash messages ───────────────────────────────────── */
+    .flash-bar {
+      width: 100%; max-width: 500px;
+      margin-bottom: 1.5rem;
+    }
+    .flash-msg {
+      border-radius: 12px; padding: .8rem 1.1rem;
+      font-size: .85rem; font-weight: 500;
+      display: flex; align-items: center; gap: .6rem;
+      margin-bottom: .5rem;
+    }
+    .flash-success { background: rgba(16,185,129,.15); border: 1px solid rgba(16,185,129,.3); color: #6ee7b7; }
+    .flash-error   { background: rgba(239,68,68,.15);  border: 1px solid rgba(239,68,68,.3);  color: #fca5a5; }
+    .flash-warn    { background: rgba(245,158,11,.12); border: 1px solid rgba(245,158,11,.25);color: #fcd34d; }
+
+    /* ── Stats strip ──────────────────────────────────────── */
+    .stats-strip {
+      display: flex; gap: 2rem; justify-content: center;
+      flex-wrap: wrap; margin-top: .5rem;
+    }
+    .stat-item { text-align: center; }
+    .stat-num  { font-size: 1.5rem; font-weight: 800; color: #fff; line-height: 1; }
+    .stat-lbl  { font-size: .72rem; color: #475569; font-weight: 600;
+                 text-transform: uppercase; letter-spacing: .08em; }
+
+    /* ── Footer ───────────────────────────────────────────── */
+    .landing-footer {
+      margin-top: 2.5rem; text-align: center;
+      font-size: .75rem; color: #334155;
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-scene"></div>
+  <div class="dot-grid"></div>
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+
+  <div class="page">
+
+    <!-- Flash messages -->
+    <div class="flash-bar">
+      {% for message in messages %}
+        {% if 'success' in message.tags %}
+          <div class="flash-msg flash-success"><i class="bi bi-check-circle-fill"></i>{{ message }}</div>
+        {% elif 'error' in message.tags or 'danger' in message.tags %}
+          <div class="flash-msg flash-error"><i class="bi bi-exclamation-circle-fill"></i>{{ message }}</div>
+        {% else %}
+          <div class="flash-msg flash-warn"><i class="bi bi-info-circle-fill"></i>{{ message }}</div>
+        {% endif %}
+      {% endfor %}
+    </div>
+
+    <!-- Branding -->
+    <div class="brand-badge">
+      <i class="bi bi-mortarboard-fill"></i>
+      University Academic System
+    </div>
+
+    <div class="hero-logo">S</div>
+
+    <h1 class="hero-title">Student Management<br/>System</h1>
+    <p class="hero-sub">
+      A unified platform for students and administrators.
+      Manage academic records, courses, and enrollments — all in one place.
+    </p>
+
+    <!-- Action cards — 2 options only, no guest access -->
+    <div class="action-grid" style="max-width:540px">
+
+      <!-- LOGIN -->
+      <a href="{% url 'login' %}" class="action-card primary-card">
+        <div class="card-icon icon-blue"><i class="bi bi-box-arrow-in-right"></i></div>
+        <div>
+          <div class="card-label">Have an account?</div>
+          <div class="card-title">Sign In</div>
+          <div class="card-desc">Log in as an admin or student portal user.</div>
+        </div>
+        <i class="bi bi-arrow-right card-arrow"></i>
+      </a>
+
+      <!-- REGISTER -->
+      <a href="{% url 'student_register' %}" class="action-card student-card">
+        <div class="card-icon icon-green"><i class="bi bi-person-plus-fill"></i></div>
+        <div>
+          <div class="card-label">New here?</div>
+          <div class="card-title">Student Register</div>
+          <div class="card-desc">Create a portal account using your Student ID.</div>
+        </div>
+        <i class="bi bi-arrow-right card-arrow"></i>
+      </a>
+
+    </div><!-- /action-grid -->
+
+    <!-- Footer note -->
+    <div class="landing-footer">
+      Student Management System &copy; 2026 &nbsp;·&nbsp; MVC Architecture &nbsp;·&nbsp; Django + SQLite
+    </div>
+
+  </div><!-- /page -->
+</body>
+</html>

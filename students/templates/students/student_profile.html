@@ -1,0 +1,138 @@
+{% extends 'students/base.html' %}
+{% block title %}My Profile — Student Portal{% endblock %}
+{% block page_title %}My Profile{% endblock %}
+
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <div class="d-flex align-items-center gap-3">
+    <div class="student-avatar"
+         style="width:60px;height:60px;font-size:1.4rem;border-radius:16px;
+                background:linear-gradient(135deg,#3b82f6,#06b6d4);flex-shrink:0">
+      {{ student.first_name|first }}{{ student.last_name|first }}
+    </div>
+    <div>
+      <h4 class="mb-0 fw-700">{{ student.full_name }}</h4>
+      <div class="text-muted small">
+        <code>{{ student.student_id }}</code>
+        &nbsp;·&nbsp;
+        <span class="status-badge status-{{ student.status }}">{{ student.status }}</span>
+      </div>
+    </div>
+  </div>
+  <a href="{% url 'student_portal' %}" class="btn btn-outline-secondary btn-sm">
+    <i class="bi bi-arrow-left me-1"></i>Back to Dashboard
+  </a>
+</div>
+
+{# Read-only notice #}
+<div class="alert alert-info d-flex align-items-center gap-2 mb-4"
+     style="font-size:.85rem;border-radius:10px">
+  <i class="bi bi-shield-lock-fill"></i>
+  <div>
+    This is your <strong>read-only</strong> profile. To update any information,
+    please contact the academic administration office.
+  </div>
+</div>
+
+<div class="row g-3">
+
+  {# ── Personal Information ── #}
+  <div class="col-md-6">
+    <div class="card h-100">
+      <div class="card-header">
+        <i class="bi bi-person-vcard me-2"></i>Personal Information
+      </div>
+      <div class="card-body">
+        {% include "students/_profile_row.html" with label="Full Name"      value=student.full_name %}
+        {% include "students/_profile_row.html" with label="Date of Birth"  value=student.date_of_birth|date:"d F Y" %}
+        {% include "students/_profile_row.html" with label="Gender"         value=student.get_gender_display %}
+        {% include "students/_profile_row.html" with label="Email Address"  value=student.email %}
+        {% include "students/_profile_row.html" with label="Phone"          value=student.phone|default:"Not provided" %}
+        {% include "students/_profile_row.html" with label="Address"        value=student.address|default:"Not provided" %}
+      </div>
+    </div>
+  </div>
+
+  {# ── Academic Information ── #}
+  <div class="col-md-6">
+    <div class="card h-100">
+      <div class="card-header">
+        <i class="bi bi-mortarboard me-2"></i>Academic Information
+      </div>
+      <div class="card-body">
+        {% include "students/_profile_row.html" with label="Student ID"    value=student.student_id %}
+        {% include "students/_profile_row.html" with label="Department"    value=student.department.name|default:"Not assigned" %}
+        {% include "students/_profile_row.html" with label="Year of Study" value=student.year_of_study|stringformat:"s"|add:" (Year)" %}
+        {% include "students/_profile_row.html" with label="GPA"           value=student.gpa|stringformat:".2f"|add:" / 4.00" %}
+        {% include "students/_profile_row.html" with label="Status"        value=student.get_status_display %}
+        {% include "students/_profile_row.html" with label="Enrolled Since" value=student.enrolled_at|date:"d F Y" %}
+      </div>
+    </div>
+  </div>
+
+  {# ── Portal Account Info ── #}
+  <div class="col-12">
+    <div class="card">
+      <div class="card-header">
+        <i class="bi bi-shield-check me-2"></i>Portal Account
+      </div>
+      <div class="card-body">
+        <div class="row g-3">
+          <div class="col-md-4">
+            <div style="font-size:.75rem;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:.05em">Username</div>
+            <div class="fw-600 mt-1"><code>{{ request.user.username }}</code></div>
+          </div>
+          <div class="col-md-4">
+            <div style="font-size:.75rem;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:.05em">Account Type</div>
+            <div class="mt-1">
+              <span class="badge" style="background:rgba(59,130,246,.12);color:#2563eb;font-size:.8rem;border-radius:6px;padding:.3rem .6rem">
+                <i class="bi bi-person-badge me-1"></i>Student Portal User
+              </span>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div style="font-size:.75rem;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:.05em">Account Created</div>
+            <div class="fw-600 mt-1">{{ profile.joined_at|date:"d M Y" }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+{# ── Quick stats ── #}
+<div class="row g-3 mt-1">
+  <div class="col-md-3">
+    <div class="card text-center py-3">
+      <div style="font-size:1.8rem;font-weight:800;color:#1a56db">{{ student.enrollments.count }}</div>
+      <div class="text-muted small">Total Enrollments</div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card text-center py-3">
+      <div style="font-size:1.8rem;font-weight:800;
+                  color:{% if student.gpa >= 3.5 %}#10b981{% elif student.gpa >= 2.0 %}#f59e0b{% else %}#ef4444{% endif %}">
+        {{ student.gpa }}
+      </div>
+      <div class="text-muted small">GPA</div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card text-center py-3">
+      <div style="font-size:1.8rem;font-weight:800;color:#7c3aed">{{ student.year_of_study }}</div>
+      <div class="text-muted small">Year of Study</div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card text-center py-3">
+      <div style="font-size:1.8rem;font-weight:800;color:#0891b2">
+        {{ student.department.code|default:"—" }}
+      </div>
+      <div class="text-muted small">Dept. Code</div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

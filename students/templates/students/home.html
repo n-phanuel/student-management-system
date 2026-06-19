@@ -1,0 +1,142 @@
+{% extends 'students/base.html' %}
+{% block title %}Dashboard — SMS{% endblock %}
+{% block page_title %}Dashboard{% endblock %}
+
+{% block content %}
+
+{# If a student portal user somehow lands here, show a friendly banner #}
+{% if user.is_authenticated and not user.is_staff and not user.is_superuser %}
+<div class="alert alert-info d-flex align-items-center gap-2 mb-3" style="font-size:.875rem;border-radius:10px">
+  <i class="bi bi-info-circle-fill fs-5"></i>
+  <div>
+    You are logged in as a <strong>student</strong>.
+    <a href="{% url 'student_portal' %}" class="alert-link">Go to your personal dashboard →</a>
+  </div>
+</div>
+{% endif %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <div>
+    <h4 class="mb-0 fw-700">
+      {% if user.is_authenticated and user.is_staff or user.is_superuser %}
+        Welcome back, {{ user.username }}! 👋
+      {% else %}
+        Public Dashboard
+      {% endif %}
+    </h4>
+    <p class="text-muted mb-0 small">System-wide overview — read-only for guests.</p>
+  </div>
+  {% if user.is_staff or user.is_superuser %}
+  <a href="{% url 'student_create' %}" class="btn btn-primary">
+    <i class="bi bi-person-plus me-1"></i> Add Student
+  </a>
+  {% endif %}
+</div>
+
+<!-- ── Stat Cards ────────────────────────────────────────── -->
+<div class="row g-3 mb-4">
+  <div class="col-sm-6 col-xl-3">
+    <div class="stat-card stat-blue">
+      <div class="stat-icon"><i class="bi bi-people-fill"></i></div>
+      <div class="stat-value">{{ total_students }}</div>
+      <div class="stat-label">Total Students</div>
+    </div>
+  </div>
+  <div class="col-sm-6 col-xl-3">
+    <div class="stat-card stat-green">
+      <div class="stat-icon"><i class="bi bi-person-check-fill"></i></div>
+      <div class="stat-value">{{ active_students }}</div>
+      <div class="stat-label">Active Students</div>
+    </div>
+  </div>
+  <div class="col-sm-6 col-xl-3">
+    <div class="stat-card stat-amber">
+      <div class="stat-icon"><i class="bi bi-building"></i></div>
+      <div class="stat-value">{{ total_departments }}</div>
+      <div class="stat-label">Departments</div>
+    </div>
+  </div>
+  <div class="col-sm-6 col-xl-3">
+    <div class="stat-card stat-violet">
+      <div class="stat-icon"><i class="bi bi-journal-bookmark-fill"></i></div>
+      <div class="stat-value">{{ total_courses }}</div>
+      <div class="stat-label">Courses</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Second row ────────────────────────────────────────── -->
+<div class="row g-3 mb-4">
+  <div class="col-sm-6 col-xl-3">
+    <div class="stat-card stat-rose">
+      <div class="stat-icon"><i class="bi bi-file-earmark-text-fill"></i></div>
+      <div class="stat-value">{{ total_enrollments }}</div>
+      <div class="stat-label">Total Enrollments</div>
+    </div>
+  </div>
+  <div class="col-sm-6 col-xl-3">
+    <div class="stat-card" style="background:linear-gradient(135deg,#0f766e,#14b8a6)">
+      <div class="stat-icon"><i class="bi bi-graph-up"></i></div>
+      <div class="stat-value">{{ avg_gpa|floatformat:2 }}</div>
+      <div class="stat-label">Average GPA</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Recent Students Table ────────────────────────────── -->
+<div class="card">
+  <div class="card-header d-flex justify-content-between align-items-center">
+    <span><i class="bi bi-clock-history me-2"></i>Recently Added Students</span>
+    <a href="{% url 'student_list' %}" class="btn btn-sm btn-outline-primary">View All</a>
+  </div>
+  <div class="card-body p-0">
+    {% if recent_students %}
+    <table class="table table-hover mb-0">
+      <thead>
+        <tr>
+          <th>Student</th>
+          <th>ID</th>
+          <th>Department</th>
+          <th>Year</th>
+          <th>GPA</th>
+          <th>Status</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for s in recent_students %}
+        <tr>
+          <td>
+            <div class="d-flex align-items-center gap-2">
+              <div class="student-avatar">{{ s.first_name|first }}{{ s.last_name|first }}</div>
+              <div>
+                <div class="fw-600">{{ s.full_name }}</div>
+                <div class="text-muted" style="font-size:.75rem">{{ s.email }}</div>
+              </div>
+            </div>
+          </td>
+          <td><code>{{ s.student_id }}</code></td>
+          <td>{{ s.department.code|default:"—" }}</td>
+          <td>Year {{ s.year_of_study }}</td>
+          <td><strong>{{ s.gpa }}</strong></td>
+          <td>
+            <span class="status-badge status-{{ s.status }}">{{ s.status }}</span>
+          </td>
+          <td>
+            <a href="{% url 'student_detail' s.pk %}" class="btn btn-sm btn-light">
+              <i class="bi bi-eye"></i>
+            </a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <div class="text-center py-5 text-muted">
+      <i class="bi bi-inbox" style="font-size:2.5rem;"></i>
+      <p class="mt-2">No students yet. <a href="{% url 'student_create' %}">Add the first one!</a></p>
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

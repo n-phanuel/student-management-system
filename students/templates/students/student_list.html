@@ -1,0 +1,116 @@
+{% extends 'students/base.html' %}
+{% block title %}Students — SMS{% endblock %}
+{% block page_title %}All Students{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h5 class="fw-700 mb-0">Student Records</h5>
+  <div class="d-flex gap-2">
+    {% if user.is_authenticated %}
+    <a href="{% url 'export_students_csv' %}" class="btn btn-sm btn-outline-secondary">
+      <i class="bi bi-download me-1"></i>Export CSV
+    </a>
+    <a href="{% url 'student_create' %}" class="btn btn-sm btn-primary">
+      <i class="bi bi-person-plus me-1"></i>Add Student
+    </a>
+    {% endif %}
+  </div>
+</div>
+
+<!-- ── Search / Filter Bar ───────────────────────────────── -->
+<div class="card mb-3">
+  <div class="card-body">
+    <form method="get" class="row g-2 align-items-end">
+      <div class="col-md-5">
+        <label class="form-label">Search</label>
+        {{ search_form.query }}
+      </div>
+      <div class="col-md-3">
+        <label class="form-label">Department</label>
+        {{ search_form.department }}
+      </div>
+      <div class="col-md-2">
+        <label class="form-label">Status</label>
+        {{ search_form.status }}
+      </div>
+      <div class="col-md-2">
+        <button type="submit" class="btn btn-primary w-100">
+          <i class="bi bi-search me-1"></i>Filter
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ── Student Table ─────────────────────────────────────── -->
+<div class="card">
+  <div class="card-header d-flex justify-content-between">
+    <span><i class="bi bi-table me-2"></i>Results</span>
+    <span class="text-muted small">{{ students|length }} record(s)</span>
+  </div>
+  <div class="card-body p-0">
+    {% if students %}
+    <div class="table-responsive">
+      <table class="table table-hover mb-0">
+        <thead>
+          <tr>
+            <th>Student</th>
+            <th>Student ID</th>
+            <th>Department</th>
+            <th>Year</th>
+            <th>GPA</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for s in students %}
+          <tr>
+            <td>
+              <div class="d-flex align-items-center gap-2">
+                <div class="student-avatar">{{ s.first_name|first }}{{ s.last_name|first }}</div>
+                <div>
+                  <a href="{% url 'student_detail' s.pk %}" class="fw-600 text-decoration-none text-dark">
+                    {{ s.full_name }}
+                  </a>
+                  <div class="text-muted" style="font-size:.75rem">{{ s.email }}</div>
+                </div>
+              </div>
+            </td>
+            <td><code>{{ s.student_id }}</code></td>
+            <td>{{ s.department.name|default:"Unassigned" }}</td>
+            <td>Year {{ s.year_of_study }}</td>
+            <td>
+              <strong
+                class="{% if s.gpa >= 3.5 %}text-success{% elif s.gpa >= 2.5 %}text-warning{% else %}text-danger{% endif %}">
+                {{ s.gpa }}
+              </strong>
+            </td>
+            <td><span class="status-badge status-{{ s.status }}">{{ s.status }}</span></td>
+            <td>
+              <div class="d-flex gap-1">
+                <a href="{% url 'student_detail' s.pk %}" class="btn btn-sm btn-light"
+                   title="View"><i class="bi bi-eye"></i></a>
+                {% if user.is_authenticated %}
+                <a href="{% url 'student_edit' s.pk %}" class="btn btn-sm btn-outline-primary"
+                   title="Edit"><i class="bi bi-pencil"></i></a>
+                <a href="{% url 'student_delete' s.pk %}" class="btn btn-sm btn-outline-danger"
+                   title="Delete"><i class="bi bi-trash"></i></a>
+                {% endif %}
+              </div>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <div class="text-center py-5 text-muted">
+      <i class="bi bi-search" style="font-size:2.5rem;"></i>
+      <p class="mt-2">No students found matching your criteria.</p>
+      <a href="{% url 'student_list' %}" class="btn btn-sm btn-outline-secondary">Clear filters</a>
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

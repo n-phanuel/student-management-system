@@ -1,0 +1,122 @@
+{% extends 'students/base.html' %}
+{% block title %}{{ title }} — SMS{% endblock %}
+{% block page_title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-9">
+    <div class="card">
+      <div class="card-header">
+        <i class="bi bi-person-badge me-2"></i>{{ title }}
+      </div>
+      <div class="card-body">
+        <form method="post" novalidate>
+          {% csrf_token %}
+
+          {% if form.non_field_errors %}
+          <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+          {% endif %}
+
+          <!-- ── Section: ID & Status ──────────────────── -->
+          <h6 class="text-muted text-uppercase fw-700 mb-3"
+              style="font-size:.7rem;letter-spacing:.1em">
+            Identification
+          </h6>
+          <div class="row g-3 mb-4">
+            <div class="col-md-6">
+              <label class="form-label">{{ form.student_id.label }}</label>
+              {{ form.student_id }}
+              {% if form.student_id.errors %}
+              <div class="invalid-feedback d-block">{{ form.student_id.errors }}</div>
+              {% endif %}
+            </div>
+            <div class="col-md-3">
+              <label class="form-label">{{ form.status.label }}</label>
+              {{ form.status }}
+            </div>
+            <div class="col-md-3">
+              <label class="form-label">{{ form.year_of_study.label }}</label>
+              {{ form.year_of_study }}
+            </div>
+          </div>
+
+          <!-- ── Section: Personal Info ────────────────── -->
+          <h6 class="text-muted text-uppercase fw-700 mb-3"
+              style="font-size:.7rem;letter-spacing:.1em">
+            Personal Information
+          </h6>
+          <div class="row g-3 mb-4">
+            <div class="col-md-6">
+              <label class="form-label">{{ form.first_name.label }}</label>
+              {{ form.first_name }}
+              {% if form.first_name.errors %}
+              <div class="invalid-feedback d-block">{{ form.first_name.errors }}</div>
+              {% endif %}
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">{{ form.last_name.label }}</label>
+              {{ form.last_name }}
+              {% if form.last_name.errors %}
+              <div class="invalid-feedback d-block">{{ form.last_name.errors }}</div>
+              {% endif %}
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">{{ form.date_of_birth.label }}</label>
+              {{ form.date_of_birth }}
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">{{ form.gender.label }}</label>
+              {{ form.gender }}
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">{{ form.phone.label }}</label>
+              {{ form.phone }}
+            </div>
+            <div class="col-12">
+              <label class="form-label">{{ form.email.label }}</label>
+              {{ form.email }}
+              {% if form.email.errors %}
+              <div class="invalid-feedback d-block">{{ form.email.errors }}</div>
+              {% endif %}
+            </div>
+            <div class="col-12">
+              <label class="form-label">{{ form.address.label }}</label>
+              {{ form.address }}
+            </div>
+          </div>
+
+          <!-- ── Section: Academic ─────────────────────── -->
+          <h6 class="text-muted text-uppercase fw-700 mb-3"
+              style="font-size:.7rem;letter-spacing:.1em">
+            Academic Details
+          </h6>
+          <div class="row g-3 mb-4">
+            <div class="col-md-8">
+              <label class="form-label">{{ form.department.label }}</label>
+              {{ form.department }}
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">{{ form.gpa.label }}</label>
+              {{ form.gpa }}
+            </div>
+          </div>
+
+          <!-- ── Actions ───────────────────────────────── -->
+          <div class="d-flex gap-2">
+            <button type="submit" class="btn btn-primary">
+              <i class="bi bi-check2-circle me-1"></i>{{ button }}
+            </button>
+            {% if student %}
+            <a href="{% url 'student_detail' student.pk %}" class="btn btn-outline-secondary">
+              Cancel
+            </a>
+            {% else %}
+            <a href="{% url 'student_list' %}" class="btn btn-outline-secondary">Cancel</a>
+            {% endif %}
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

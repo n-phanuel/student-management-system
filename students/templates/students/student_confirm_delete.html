@@ -1,0 +1,40 @@
+{% extends 'students/base.html' %}
+{% block title %}Delete Student — SMS{% endblock %}
+{% block page_title %}Delete Student{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-6">
+    <div class="card border-danger">
+      <div class="card-header text-danger">
+        <i class="bi bi-exclamation-triangle me-2"></i>Confirm Deletion
+      </div>
+      <div class="card-body">
+        <p>Are you sure you want to permanently delete:</p>
+        <div class="d-flex align-items-center gap-3 p-3 bg-light rounded mb-4">
+          <div class="student-avatar" style="width:48px;height:48px;border-radius:12px;font-size:1.1rem;">
+            {{ student.first_name|first }}{{ student.last_name|first }}
+          </div>
+          <div>
+            <strong>{{ student.full_name }}</strong><br>
+            <code>{{ student.student_id }}</code> &bull; {{ student.email }}
+          </div>
+        </div>
+        <p class="text-danger small">
+          <i class="bi bi-exclamation-circle me-1"></i>
+          This will also delete all related enrollment records. This action cannot be undone.
+        </p>
+        <form method="post" class="d-flex gap-2">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-danger">
+            <i class="bi bi-trash me-1"></i>Yes, Delete
+          </button>
+          <a href="{% url 'student_detail' student.pk %}" class="btn btn-outline-secondary">
+            Cancel
+          </a>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

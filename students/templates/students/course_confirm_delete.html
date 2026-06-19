@@ -1,0 +1,22 @@
+{% extends 'students/base.html' %}
+{% block title %}Delete Course — SMS{% endblock %}
+{% block page_title %}Delete Course{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-6">
+    <div class="card border-danger">
+      <div class="card-header text-danger"><i class="bi bi-exclamation-triangle me-2"></i>Confirm Deletion</div>
+      <div class="card-body">
+        <p>Are you sure you want to delete course <strong>{{ course.code }}: {{ course.name }}</strong>?</p>
+        <p class="text-danger small"><i class="bi bi-exclamation-circle me-1"></i>All enrollment records for this course will also be deleted.</p>
+        <form method="post" class="d-flex gap-2">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-danger"><i class="bi bi-trash me-1"></i>Yes, Delete</button>
+          <a href="{% url 'course_list' %}" class="btn btn-outline-secondary">Cancel</a>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

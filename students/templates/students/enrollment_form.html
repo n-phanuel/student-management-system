@@ -1,0 +1,49 @@
+{% extends 'students/base.html' %}
+{% block title %}{{ title }} — SMS{% endblock %}
+{% block page_title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-7">
+    <div class="card">
+      <div class="card-header"><i class="bi bi-plus-circle me-2"></i>{{ title }}</div>
+      <div class="card-body">
+        <form method="post">
+          {% csrf_token %}
+          <div class="mb-3">
+            <label class="form-label">{{ form.student.label }}</label>
+            {{ form.student }}
+          </div>
+          <div class="mb-3">
+            <label class="form-label">{{ form.course.label }}</label>
+            {{ form.course }}
+          </div>
+          <div class="row g-3 mb-3">
+            <div class="col-md-4">
+              <label class="form-label">{{ form.semester.label }}</label>
+              {{ form.semester }}
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">{{ form.year.label }}</label>
+              {{ form.year }}
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">{{ form.grade.label }}</label>
+              {{ form.grade }}
+            </div>
+          </div>
+          {% if form.non_field_errors %}
+          <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+          {% endif %}
+          <div class="d-flex gap-2">
+            <button type="submit" class="btn btn-primary">
+              <i class="bi bi-check2-circle me-1"></i>Save Enrollment
+            </button>
+            <a href="{% url 'student_list' %}" class="btn btn-outline-secondary">Cancel</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

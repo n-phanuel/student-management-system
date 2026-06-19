@@ -1,0 +1,23 @@
+{% extends 'students/base.html' %}
+{% block title %}Delete Department — SMS{% endblock %}
+{% block page_title %}Delete Department{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-6">
+    <div class="card border-danger">
+      <div class="card-header text-danger"><i class="bi bi-exclamation-triangle me-2"></i>Confirm Deletion</div>
+      <div class="card-body">
+        <p>Are you sure you want to delete department <strong>{{ dept.name }} ({{ dept.code }})</strong>?</p>
+        <p class="text-danger small"><i class="bi bi-exclamation-circle me-1"></i>
+          Students assigned to this department will have their department set to "Unassigned". Courses will be deleted.</p>
+        <form method="post" class="d-flex gap-2">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-danger"><i class="bi bi-trash me-1"></i>Yes, Delete</button>
+          <a href="{% url 'department_list' %}" class="btn btn-outline-secondary">Cancel</a>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
